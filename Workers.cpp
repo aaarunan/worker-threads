@@ -25,9 +25,7 @@ void Workers::start() {
                 unique_lock<mutex> lock(mtx);
 
                 while (tasks.empty()) {
-                    if (!loop) {
-                        return;
-                    }
+                    if (!loop) return;
                     threads_cv.wait(lock);
                 }
 
@@ -46,9 +44,7 @@ void Workers::start() {
 
 void Workers::stop() {
     loop = false;
-    for (auto &thread: threads) {
-        thread.join();
-    }
+    for (auto &thread: threads) thread.join();
 }
 
 
