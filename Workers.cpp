@@ -22,20 +22,24 @@ void Workers::start() {
     for (int i = 0; i < thread_count; i++) {
         threads.emplace_back([this] {
             while (true) {
+
+                // grab lock before acdessing tasks
                 unique_lock<mutex> lock(mtx);
 
+                //if there are no tasks we release the lock and sleep
                 while (tasks.empty()) {
                     if (!loop) return;
                     threads_cv.wait(lock);
                 }
 
+                // get a task and release the lock and notify other threads.
+
                 function<void()> task = tasks.front();
                 tasks.pop();
-
                 lock.unlock();
-
                 threads_cv.notify_one();
 
+                //do the task after releasing lock
                 task();
             }
         });
