@@ -18,9 +18,11 @@ using namespace std;
 class Workers {
 public:
     void start();
-
+    void post(const function<void()> &task);
     void stop();
+    explicit Workers(int);
 
+private:
     int thread_count;
     bool loop{false};
     queue<function<void()>> tasks{};
@@ -28,9 +30,7 @@ public:
     condition_variable threads_cv{};
     vector<thread> threads{};
 
-    explicit Workers(int);
 
-    void post(const function<void()> &task);
 };
 
 
